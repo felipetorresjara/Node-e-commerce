@@ -6,6 +6,11 @@ const ProductSchema = Schema({
         required: [true, 'Name is required'],
         unique: true
     },
+    product_id:{
+        type: String,
+        required: [true, 'Product id is required'],
+        unique: true
+    },
     state:{
         type: Boolean,
         default: true,
@@ -15,6 +20,9 @@ const ProductSchema = Schema({
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
+    },
+    image: {
+        type: String,
     },
     price: {
         type: Number,
@@ -35,7 +43,8 @@ const ProductSchema = Schema({
 });
 
 ProductSchema.methods.toJSON = function(){
-    const { __v, state, ...data} = this.toObject();
+    const { __v, product_id, state, ...data} = this.toObject();
+    data.id = product_id;
     return data
 }
 module.exports = model('Product', ProductSchema);

@@ -32,7 +32,7 @@ const categoryValidator = async(id) => {
 }
 
 const productValidator = async(id) => {
-    const product = await Product.findById(id);
+    const product = await Product.find({product_id: id});
     if(!product){
         throw new Error(`invalid product: ${id}`);
     }

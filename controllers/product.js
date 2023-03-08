@@ -1,12 +1,11 @@
 const { response } = require("express");
 const Product = require('../models/product')
-const ProductsPerPage = 10;
+const productsPerPage = 24;
 
 const createProduct = async (req, res = response) => {
     const {state, user, ...body} = req.body;
     body.name = body.name.toUpperCase();
     const productDB = await Product.findOne({name: body.name});
-    console.log(productDB)
     if(productDB !== null){
         return res.status(400).json({
             "message": "product already exists"
@@ -27,23 +26,23 @@ const createProduct = async (req, res = response) => {
 }
 
 const getProducts = async (req, res = response) => {
-    const { page = 1, query = '' } = req.query;
+    const { page = 1, search = '' } = req.query;
     
-    const regex = new RegExp(query, 'i');
+    const regex = new RegExp(search, 'i');
     const [total, products] = await Promise.all([
-        Product.countDocuments({state: true, name: regex}),
-        Product.find({state: true, name: regex})
-        .populate('category', 'name')
-        .skip((Number(page)-1)*ProductsPerPage)
-        .limit(ProductsPerPage)
+        Product.countDocuments({name: regex}),
+        Product.find({name: regex})
+        .skip((Number(page)-1)*productsPerPage)
+        .limit(productsPerPage)
     ])
-    res.json({"total": total, "products": products});
+    const total_pages = total < productsPerPage ? 1 : Math.ceil(total/productsPerPage);
+    res.json({"total": total, total_pages: total_pages, page: Number(page), "products": products});
 }
 
 const getProduct = async (req, res = response) => {
     const {id} = req.params;
 
-    const product = await Product.findById(id).populate('category', 'name');
+    const product = await Product.findOne({product_id: id});
     res.json(product)
 }
 

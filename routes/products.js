@@ -12,7 +12,7 @@ router.get('/', getProducts);
 
 //get products with id
 router.get('/:id',[
-    check('id', 'Invalid id').isMongoId(),
+    check('id', 'Product_id is required').not().isEmpty(),
     check('id').custom(productValidator),
     validParams
 ],getProduct);
@@ -20,6 +20,7 @@ router.get('/:id',[
 //create product
 router.post('/',[
     validateJWT,
+    check('product_id', 'Product_id is required').not().isEmpty(),
     check('name', 'Name is required').not().isEmpty(),
     check('category', 'invalid category id').isMongoId(),
     check('category').custom(categoryValidator),
@@ -29,7 +30,7 @@ router.post('/',[
 //update product
 router.put('/:id', [
     validateJWT,
-    check('id', 'invalid category id').isMongoId(),
+    check('id', 'Product_id is required').not().isEmpty(),
     check('id').custom(productValidator),
     check('name', 'name is required').not().isEmpty(),
     check('category', 'invalid category id').isMongoId(),
@@ -40,7 +41,7 @@ router.put('/:id', [
 //delete product
 router.delete('/:id',[
     validateJWT,
-    check('id', 'invalid id').isMongoId(),
+    check('id', 'Product_id is required').not().isEmpty(),
     check('id').custom(productValidator),
     validParams
 ], deleteProduct);
